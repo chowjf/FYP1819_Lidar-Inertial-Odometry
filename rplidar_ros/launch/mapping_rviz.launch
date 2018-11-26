@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<launch>
+  
+  <arg name="path" default="/home/jchow/catkin_ws_fyp/rosbag" />
+  <arg name="record" default="slam_1_2018-10-06-17-20-25"/>
+  <node pkg="rosbag" type="play" name="hector_bag" output="screen" args="--clock $(arg path)/$(arg record).bag"/>
+
+  <node pkg="rviz" type="rviz" name="rviz"
+    args="-d $(find hector_slam_launch)/rviz_cfg/mapping_demo.rviz"/>
+
+</launch>
