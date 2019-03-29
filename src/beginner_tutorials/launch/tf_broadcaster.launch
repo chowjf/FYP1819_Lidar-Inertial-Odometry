@@ -1,0 +1,17 @@
+<launch>
+
+  <arg name="trajectory_update_rate" default="4.0"/>
+  <arg name="trajectory_publish_rate" default="4.0"/>
+
+  <node pkg="hector_trajectory_server" type="hector_trajectory_server" name="vision_trajectory_server" output="screen">
+    <param name="target_frame_name" type="string" value="/map" />
+    <param name="source_frame_name" type="string" value="/vision_link" />
+    <param name="trajectory_update_rate" type="double" value="$(arg trajectory_update_rate)" />
+    <param name="trajectory_publish_rate" type="double" value="$(arg trajectory_publish_rate)" />
+    <remap from="/trajectory" to="/3D_trajectory"/>
+  </node>
+
+  <!--node pkg="rviz" type="rviz" name="rviz"
+  args="-d /home/jchow/catkin_ws_fyp/src/beginner_tutorial/rviz_config/3D_visualization.rviz"/-->
+
+</launch>
