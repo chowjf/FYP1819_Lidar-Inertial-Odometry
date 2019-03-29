@@ -83,4 +83,5 @@ roslaunch mocap_bridge mocap_bridge.launch
 > To change the parameters, direct edit the .launch files in `./launch` folder respectively
 
 ## Detail Information
-For more detailed documentation, please refer to [here]
+For more detailed documentation, please refer to [here](documentary/C018_SLAM.pdf)
+      
