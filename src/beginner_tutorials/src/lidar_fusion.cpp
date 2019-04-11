@@ -4,11 +4,14 @@
 // TFmini, fusing them become complete 3D Pose msgs publishing to /vision_pose topic
 //----updated 29 Mar:
 //include 0.08m offset to CG of base_link
+//----updated 11 Apr:
+//add /mavros/Altitude to solve tfmini limitation
 
 #include "ros/ros.h"
 #include <geometry_msgs/PoseStamped.h>
 #include <sensor_msgs/Range.h>
 #include <tf/transform_datatypes.h>
+#include <mavros_msgs/Altitude.h>
 #include <math.h>
 
 //sampling rate in Hz
@@ -17,6 +20,7 @@ int loopRate = 10; double offset = 0.08;
 //Variables
 geometry_msgs::PoseStamped vision_pose, hector_pose, local_pose;
 sensor_msgs::Range tfmini_alti;
+mavros_msgs::Altitude local_alti;
 
 void callback_hector_pose(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
@@ -36,6 +40,11 @@ void callback_local_pose(const geometry_msgs::PoseStamped::ConstPtr& msg)
     local_pose = *msg;
 }
 
+void callback_local_alti(const mavros_msgs::Altitude::ConstPtr& msg)
+{
+    local_alti = *msg;
+}
+
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "lidar_fusion_node");
@@ -52,6 +61,7 @@ int main(int argc, char **argv)
     ros::Subscriber hector_pose_sub = n.subscribe<geometry_msgs::PoseStamped>("/slam_out_pose",loopRate, callback_hector_pose);
     ros::Subscriber tfmini_alti_sub = n.subscribe<sensor_msgs::Range>("/mavros/distance_sensor/tfmini_pub", loopRate, callback_tfmini_alti);
     ros::Subscriber local_pos_sub = n.subscribe<geometry_msgs::PoseStamped>("/mavros/local_position/pose", loopRate, callback_local_pose);
+    ros::Subscriber local_alti_sub = n.subscribe<mavros_msgs::Altitude>("/mavros/altitude", loopRate, callback_local_alti);
 
     ros::Publisher vision_pub = n.advertise<geometry_msgs::PoseStamped>("/mavros/vision_pose/pose",loopRate);
 
@@ -79,7 +89,10 @@ int main(int argc, char **argv)
         vision_pose.header.frame_id = p_base_frame_; //optional. Works fine without frame_id
         vision_pose.pose.position.x = hector_pose.pose.position.x;
         vision_pose.pose.position.y = hector_pose.pose.position.y;
-        vision_pose.pose.position.z = tfmini_alti.range + offset;
+        if(tfmini_alti.range < 0.3)
+          vision_pose.pose.position.z = local_alti.local;
+        else
+          vision_pose.pose.position.z = tfmini_alti.range + offset;
         vision_pose.pose.orientation.x = vision_q.getX();
         vision_pose.pose.orientation.y = vision_q.getY();
         vision_pose.pose.orientation.z = vision_q.getZ();
