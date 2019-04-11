@@ -56,7 +56,7 @@ int main(int argc, char **argv)
     pn.param<std::string>("base_frame", p_base_frame_, "base_fusion");
     // pn.param("lidar_topic", p_lidar_topic_, std::string("/mavros/distance_sensor/tfmini_pub"));
     pn.param<int>("loop_rate", loopRate, 10);
-    pn.param<int>("offset_altitude", offset, 0.08);
+    pn.param<double>("offset_altitude", offset, 0.08);
 
     ros::Subscriber hector_pose_sub = n.subscribe<geometry_msgs::PoseStamped>("/slam_out_pose",loopRate, callback_hector_pose);
     ros::Subscriber tfmini_alti_sub = n.subscribe<sensor_msgs::Range>("/mavros/distance_sensor/tfmini_pub", loopRate, callback_tfmini_alti);
