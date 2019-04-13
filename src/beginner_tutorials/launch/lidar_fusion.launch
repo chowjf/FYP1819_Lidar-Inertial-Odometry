@@ -2,10 +2,12 @@
 
   <arg name="loop_rate" default="10"/>
   <arg name="base_frame" default="map"/>
+  <arg name="input_source" default="1"/>
 
   <node name="lidar_fusion_node"    pkg="beginner_tutorials"  type="lidar_fusion" output="screen">
-  <param name="loop_rate"         type="int" value="$(arg loop_rate)"/>
-  <param name="base_frame"        type="string" value="$(arg base_frame)"/>
+  <param name="loop_rate"    type="int" value="$(arg loop_rate)"/>
+  <param name="base_frame"   type="string" value="$(arg base_frame)"/>
+  <param name="input_source" type="int" value="$(arg input_source)"/> <!--1: IMU/Hecto 2:IMU 3:mocap-->
   </node>
 
   <node name="tf_broadcaster_node"    pkg="beginner_tutorials" type="tf_broadcaster" output="screen"/>
